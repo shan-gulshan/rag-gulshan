@@ -115,40 +115,6 @@ if user_input:
         "run_name": "chat_turn",
     }
 
-    with st.chat_message("assistant"):
-        status_holder = {"box": None}
-
-        def ai_only_stream():
-            for message_chunk, _ in chatbot.stream(
-                {"messages": [HumanMessage(content=user_input)]},
-                config=CONFIG,
-                stream_mode="messages",
-            ):
-                if isinstance(message_chunk, ToolMessage):
-                    tool_name = getattr(message_chunk, "name", "tool")
-                    if status_holder["box"] is None:
-                        status_holder["box"] = st.status(
-                            f"🔧 Using `{tool_name}` …", expanded=True
-                        )
-                    else:
-                        status_holder["box"].update(
-                            label=f"🔧 Using `{tool_name}` …",
-                            state="running",
-                            expanded=True,
-                        )
-
-                if isinstance(message_chunk, AIMessage):
-                    content = message_chunk.content
-                    if isinstance(content, list):
-                        final_text = ""
-                        for part in content:
-                            if isinstance(part, dict) and "text" in part:
-                                final_text += part["text"]
-                            elif isinstance(part, str):
-                                final_text += part
-                        yield final_text
-                else:
-                    yield content
 
 
         with st.chat_message("assistant"):
@@ -172,13 +138,6 @@ if user_input:
                 ai_message = ai_content
 
             st.write(ai_message)
-
-
-
-        if status_holder["box"] is not None:
-            status_holder["box"].update(
-                label="✅ Tool finished", state="complete", expanded=False
-            )
 
     st.session_state["message_history"].append(
         {"role": "assistant", "content": ai_message}
@@ -205,6 +164,7 @@ if selected_thread:
     st.session_state["ingested_docs"].setdefault(str(selected_thread), {})
 
     st.rerun()
+
 
 
 
