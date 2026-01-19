@@ -26,7 +26,7 @@ load_dotenv()
 # -------------------
 # 1. LLM + embeddings
 # -------------------
-llm = ChatGoogleGenerativeAI(model='gemini-2.0-flash')
+llm = ChatGoogleGenerativeAI(model='gemini-2.5-flash')
 embeddings = HuggingFaceEmbeddings(model = 'sentence-transformers/all-MiniLM-L6-v2')
 
 # -------------------
@@ -167,7 +167,7 @@ def rag_tool(query: str, thread_id: Optional[str] = None) -> dict:
 
 
 tools = [get_stock_price, calculator, rag_tool]
-llm_with_tools = llm
+llm_with_tools = llm.bind_tools(tools)
 
 # -------------------
 # 4. State
@@ -187,7 +187,11 @@ def chat_node(state: ChatState, config=None):
 
     system_message = SystemMessage(
         content=(
-            "You are a helpful assistant. Answer using the provided document context if available."
+            "You are a helpful assistant. For questions about the uploaded PDF, call "
+            "the `rag_tool` and include the thread_id "
+            f"`{thread_id}`. You can also use the web search, stock price, and "
+            "calculator tools when helpful. If no document is available, ask the user "
+            "to upload a PDF."
         )
     )
 
@@ -227,13 +231,6 @@ def thread_has_document(thread_id: str) -> bool:
 def thread_document_metadata(thread_id: str) -> dict:
 
     return _THREAD_METADATA.get(str(thread_id), {})
-
-
-
-
-
-
-
 
 
 
