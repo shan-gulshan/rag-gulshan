@@ -138,7 +138,7 @@ if user_input:
                         )
 
                 if isinstance(message_chunk, AIMessage):
-                   content = message_chunk.content
+                    content = message_chunk.content
                     if isinstance(content, list):
                         final_text = ""
                         for part in content:
@@ -183,4 +183,5 @@ if selected_thread:
     st.session_state["ingested_docs"].setdefault(str(selected_thread), {})
 
     st.rerun()
+
 
