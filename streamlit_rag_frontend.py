@@ -116,10 +116,10 @@ if user_input:
     }
 
     with st.chat_message("assistant"):
-            response = chatbot.invoke(
-                {"messages": [HumanMessage(content=user_input)]},
-                config=CONFIG,
-            )
+        response = chatbot.invoke(
+            {"messages": [HumanMessage(content=user_input)]},
+            config=CONFIG,
+        )
 
             ai_content = response["messages"][-1].content
 
@@ -162,6 +162,7 @@ if selected_thread:
     st.session_state["ingested_docs"].setdefault(str(selected_thread), {})
 
     st.rerun()
+
 
 
 
