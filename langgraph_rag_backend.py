@@ -16,7 +16,7 @@ from langchain_core.messages import BaseMessage, SystemMessage
 from langchain_core.tools import tool
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_huggingface import HuggingFaceEmbeddings
-from langgraph.checkpoint.sqlite import SqliteSaver
+
 from langgraph.graph import START, StateGraph
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode, tools_condition
@@ -213,11 +213,6 @@ def chat_node(state: ChatState, config=None):
 
 tool_node = ToolNode(tools)
 
-# -------------------
-# 6. Checkpointer
-# -------------------
-conn = sqlite3.connect(database="chatbot.db", check_same_thread=False)
-checkpointer = SqliteSaver(conn=conn)
 
 # -------------------
 # 7. Graph
@@ -230,7 +225,7 @@ graph.add_edge(START, "chat_node")
 graph.add_conditional_edges("chat_node", tools_condition)
 graph.add_edge("tools", "chat_node")
 
-chatbot = graph.compile(checkpointer=checkpointer)
+chatbot = graph.compile()
 
 # -------------------
 # 8. Helpers
@@ -249,3 +244,4 @@ def thread_has_document(thread_id: str) -> bool:
 def thread_document_metadata(thread_id: str) -> dict:
 
     return _THREAD_METADATA.get(str(thread_id), {})
+
