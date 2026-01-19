@@ -116,26 +116,36 @@ if user_input:
     }
 
     with st.chat_message("assistant"):
-        response = chatbot.invoke(
-            {"messages": [HumanMessage(content=user_input)]},
-            config=CONFIG,
-        )
+        status_holder = {"box": None}
 
-        ai_content = response["messages"][-1].content
+        def ai_only_stream():
+            for message_chunk, _ in chatbot.stream(
+                {"messages": [HumanMessage(content=user_input)]},
+                config=CONFIG,
+                stream_mode="messages",
+            ):
+                if isinstance(message_chunk, ToolMessage):
+                    tool_name = getattr(message_chunk, "name", "tool")
+                    if status_holder["box"] is None:
+                        status_holder["box"] = st.status(
+                            f"🔧 Using `{tool_name}` …", expanded=True
+                        )
+                    else:
+                        status_holder["box"].update(
+                            label=f"🔧 Using `{tool_name}` …",
+                            state="running",
+                            expanded=True,
+                        )
 
-        # clean Gemini structured output
-        if isinstance(ai_content, list):
-            final_text = ""
-            for part in ai_content:
-                if isinstance(part, dict) and "text" in part:
-                    final_text += part["text"]
-                elif isinstance(part, str):
-                    final_text += part
-            ai_message = final_text
-        else:
-            ai_message = ai_content
+                if isinstance(message_chunk, AIMessage):
+                    yield message_chunk.content
 
-        st.write(ai_message)
+        ai_message = st.write_stream(ai_only_stream())
+
+        if status_holder["box"] is not None:
+            status_holder["box"].update(
+                label="✅ Tool finished", state="complete", expanded=False
+            )
 
     st.session_state["message_history"].append(
         {"role": "assistant", "content": ai_message}
@@ -162,10 +172,3 @@ if selected_thread:
     st.session_state["ingested_docs"].setdefault(str(selected_thread), {})
 
     st.rerun()
-
-
-
-
-
-
-
