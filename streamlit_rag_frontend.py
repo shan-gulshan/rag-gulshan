@@ -1,4 +1,4 @@
-# this is copied code and baad me video ke last se code karna
+
 
 import uuid
 
@@ -170,4 +170,5 @@ if selected_thread:
         temp_messages.append({"role": role, "content": msg.content})
     st.session_state["message_history"] = temp_messages
     st.session_state["ingested_docs"].setdefault(str(selected_thread), {})
+
     st.rerun()
