@@ -12,3 +12,5 @@ pypdf
 duckduckgo-search
 requests
 langchain-google-genai
+langchain-qdrant
+qdrant-client
