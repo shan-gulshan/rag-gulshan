@@ -121,21 +121,21 @@ if user_input:
             config=CONFIG,
         )
 
-            ai_content = response["messages"][-1].content
+        ai_content = response["messages"][-1].content
 
-            # clean Gemini structured output
-            if isinstance(ai_content, list):
-                final_text = ""
-                for part in ai_content:
-                    if isinstance(part, dict) and "text" in part:
-                        final_text += part["text"]
-                    elif isinstance(part, str):
-                        final_text += part
-                ai_message = final_text
-            else:
-                ai_message = ai_content
+        # clean Gemini structured output
+        if isinstance(ai_content, list):
+            final_text = ""
+            for part in ai_content:
+                if isinstance(part, dict) and "text" in part:
+                    final_text += part["text"]
+                elif isinstance(part, str):
+                    final_text += part
+            ai_message = final_text
+        else:
+            ai_message = ai_content
 
-            st.write(ai_message)
+        st.write(ai_message)
 
     st.session_state["message_history"].append(
         {"role": "assistant", "content": ai_message}
@@ -162,6 +162,7 @@ if selected_thread:
     st.session_state["ingested_docs"].setdefault(str(selected_thread), {})
 
     st.rerun()
+
 
 
 
