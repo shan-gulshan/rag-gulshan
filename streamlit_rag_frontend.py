@@ -138,7 +138,18 @@ if user_input:
                         )
 
                 if isinstance(message_chunk, AIMessage):
-                    yield message_chunk.content
+                   content = message_chunk.content
+                    if isinstance(content, list):
+                        final_text = ""
+                        for part in content:
+                            if isinstance(part, dict) and "text" in part:
+                                final_text += part["text"]
+                            elif isinstance(part, str):
+                                final_text += part
+                        yield final_text
+                else:
+                    yield content
+
 
         ai_message = st.write_stream(ai_only_stream())
 
@@ -172,3 +183,4 @@ if selected_thread:
     st.session_state["ingested_docs"].setdefault(str(selected_thread), {})
 
     st.rerun()
+
