@@ -26,7 +26,7 @@ load_dotenv()
 # -------------------
 # 1. LLM + embeddings
 # -------------------
-llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash",temperature=0.2)
+llm = ChatGoogleGenerativeAI(model='gemini-2.5-flash')
 embeddings = HuggingFaceEmbeddings(model = 'sentence-transformers/all-MiniLM-L6-v2')
 
 # -------------------
@@ -227,6 +227,7 @@ def thread_has_document(thread_id: str) -> bool:
 def thread_document_metadata(thread_id: str) -> dict:
 
     return _THREAD_METADATA.get(str(thread_id), {})
+
 
 
 
