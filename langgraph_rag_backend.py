@@ -10,8 +10,8 @@ from dotenv import load_dotenv
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.tools import DuckDuckGoSearchRun
-from langchain_qdrant import QdrantVectorStore
-from qdrant_client import QdrantClient
+from langchain_community.vectorstores import FAISS
+
 from langchain_core.messages import BaseMessage, SystemMessage
 from langchain_core.tools import tool
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -23,12 +23,6 @@ from langgraph.prebuilt import ToolNode, tools_condition
 import requests
 
 load_dotenv()
-#
-qdrant_client = QdrantClient(
-    url=os.getenv("QDRANT_URL"),
-    api_key=os.getenv("QDRANT_API_KEY"),
-)
-
 # -------------------
 # 1. LLM + embeddings
 # -------------------
@@ -71,12 +65,7 @@ def ingest_pdf(file_bytes: bytes, thread_id: str, filename: Optional[str] = None
         )
         chunks = splitter.split_documents(docs)
 
-        vector_store = QdrantVectorStore.from_documents(
-        documents=chunks,
-        embedding=embeddings,
-        client=qdrant_client,
-        collection_name=f"thread_{thread_id}"
-)
+        vector_store = FAISS.from_documents(chunks, embeddings)
 
         retriever = vector_store.as_retriever(
             search_type="similarity", search_kwargs={"k": 4}
@@ -242,6 +231,7 @@ def thread_has_document(thread_id: str) -> bool:
 def thread_document_metadata(thread_id: str) -> dict:
 
     return _THREAD_METADATA.get(str(thread_id), {})
+
 
 
 
