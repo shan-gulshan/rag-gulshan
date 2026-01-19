@@ -1,4 +1,3 @@
-# this is copied code and baad me video ke last se code karna
 
 from __future__ import annotations
 
@@ -52,7 +51,7 @@ def _get_retriever(thread_id: Optional[str]):
 
 def ingest_pdf(file_bytes: bytes, thread_id: str, filename: Optional[str] = None) -> dict:
     """
-    Build a FAISS retriever for the uploaded PDF and store it for the thread.
+    Build a  retriever for the uploaded PDF and store it for the thread.
 
     Returns a summary dict that can be surfaced in the UI.
     """
@@ -96,7 +95,7 @@ def ingest_pdf(file_bytes: bytes, thread_id: str, filename: Optional[str] = None
             "chunks": len(chunks),
         }
     finally:
-        # The FAISS store keeps copies of the text, so the temp file is safe to remove.
+        # The store keeps copies of the text, so the temp file is safe to remove.
         try:
             os.remove(temp_path)
         except OSError:
@@ -248,4 +247,5 @@ def thread_has_document(thread_id: str) -> bool:
 
 
 def thread_document_metadata(thread_id: str) -> dict:
+
     return _THREAD_METADATA.get(str(thread_id), {})
