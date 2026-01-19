@@ -14,3 +14,4 @@ requests
 langchain-google-genai
 langchain-qdrant
 qdrant-client
+langgraph>=0.0.40
