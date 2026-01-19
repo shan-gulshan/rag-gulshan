@@ -151,7 +151,29 @@ if user_input:
                     yield content
 
 
-        ai_message = st.write_stream(ai_only_stream())
+        with st.chat_message("assistant"):
+            response = chatbot.invoke(
+                {"messages": [HumanMessage(content=user_input)]},
+                config=CONFIG,
+            )
+
+            ai_content = response["messages"][-1].content
+
+            # clean Gemini structured output
+            if isinstance(ai_content, list):
+                final_text = ""
+                for part in ai_content:
+                    if isinstance(part, dict) and "text" in part:
+                        final_text += part["text"]
+                    elif isinstance(part, str):
+                        final_text += part
+                ai_message = final_text
+            else:
+                ai_message = ai_content
+
+            st.write(ai_message)
+
+
 
         if status_holder["box"] is not None:
             status_holder["box"].update(
@@ -183,5 +205,6 @@ if selected_thread:
     st.session_state["ingested_docs"].setdefault(str(selected_thread), {})
 
     st.rerun()
+
 
 
