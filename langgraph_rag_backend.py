@@ -105,7 +105,7 @@ def ingest_pdf(file_bytes: bytes, thread_id: str, filename: Optional[str] = None
 # -------------------
 # 3. Tools
 # -------------------
-search_tool = DuckDuckGoSearchRun(region="us-en")
+#search_tool = DuckDuckGoSearchRun(region="us-en")
 
 
 @tool
@@ -177,7 +177,7 @@ def rag_tool(query: str, thread_id: Optional[str] = None) -> dict:
     }
 
 
-tools = [search_tool, get_stock_price, calculator, rag_tool]
+tools = [get_stock_price, calculator, rag_tool]
 llm_with_tools = llm.bind_tools(tools)
 
 # -------------------
@@ -244,4 +244,5 @@ def thread_has_document(thread_id: str) -> bool:
 def thread_document_metadata(thread_id: str) -> dict:
 
     return _THREAD_METADATA.get(str(thread_id), {})
+
 
