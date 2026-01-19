@@ -115,9 +115,7 @@ if user_input:
         "run_name": "chat_turn",
     }
 
-
-
-        with st.chat_message("assistant"):
+    with st.chat_message("assistant"):
             response = chatbot.invoke(
                 {"messages": [HumanMessage(content=user_input)]},
                 config=CONFIG,
@@ -164,6 +162,7 @@ if selected_thread:
     st.session_state["ingested_docs"].setdefault(str(selected_thread), {})
 
     st.rerun()
+
 
 
 
